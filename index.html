@@ -33,7 +33,7 @@ footer{text-align:center;color:#b29a83;font-size:.76rem;margin-top:17px}
 </head>
 <body>
 <main>
-<header class="brand"><div class="eyebrow">ELECTRA EXPLAINS</div><h1>Live Call Studio</h1><p>Join the conversation, one caller at a time.</p></header>
+<header class="brand"><div class="eyebrow">THE MOVIE LIST</div><h1>Live Call Studio</h1><p>Join the conversation, one caller at a time.</p></header>
 <div class="card">
 <section id="home" class="center">
 <div class="bigicon">✦</div><h2 class="section-title">Welcome to the call studio</h2>
@@ -83,11 +83,13 @@ footer{text-align:center;color:#b29a83;font-size:.76rem;margin-top:17px}
 (() => {
   const $ = id => document.getElementById(id);
   const params = new URLSearchParams(location.search);
-  const hostIdFromLink = params.get('host');
+  const isHostDashboard = params.get('dashboard') === '1';
+  // The public root URL is the caller page. The host uses ?dashboard=1.
+  const hostIdFromLink = isHostDashboard ? null : (params.get('host') || 'tml-the-movie-list-live');
   const debugMode = params.get('debug') === '1';
   const traceMode = params.get('trace') === '1';
   // Version the generated caller URL so browsers cannot reuse an older cached page.
-  const buildVersion = '20261121-1';;
+  const buildVersion = '20261121-2';
   const diagnosticEntries = [];
   function diag(event, details = {}) {
     if (!debugMode && !traceMode) return;
@@ -622,7 +624,7 @@ footer{text-align:center;color:#b29a83;font-size:.76rem;margin-top:17px}
     call.on('stream', watchPeerConnection);
   }
 
-  if (hostIdFromLink) {
+  if (!isHostDashboard) {
     hide('home'); show('caller');
     bindVolume('callerVolume','callerRemoteAudio','callerVolumeValue');
     document.addEventListener('visibilitychange', () => {
@@ -863,7 +865,7 @@ footer{text-align:center;color:#b29a83;font-size:.76rem;margin-top:17px}
       const thisPeer = peer;
       thisPeer.on('open', id => {
         if (peer !== thisPeer) return;
-        const link = 'https://the-movie-list-live.github.io/calls/?host=' + encodeURIComponent(id);
+        const link = 'https://the-movie-list-live.github.io/calls/';
         setText('shareLink',link);
         $('copyBtn').onclick = async () => {
           try { await navigator.clipboard.writeText(link); setText('copyBtn','Copied!'); }
@@ -1162,11 +1164,7 @@ footer{text-align:center;color:#b29a83;font-size:.76rem;margin-top:17px}
       hide('home'); show('host');
       // Persist one private, random host ID on this browser so refreshing the
       // host dashboard does not invalidate the caller link.
-      let savedHostId = localStorage.getItem('theMovieListHostId');
-      if (!savedHostId) {
-        savedHostId = 'tml-' + (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now().toString(36));
-        localStorage.setItem('theMovieListHostId', savedHostId);
-      }
+      const savedHostId = 'tml-the-movie-list-live';
       makeHostPeer(savedHostId);
     });
     $('hostMuteBtn').addEventListener('click', () => setMicMuted(!muted));
