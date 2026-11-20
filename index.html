@@ -83,8 +83,8 @@ footer{text-align:center;color:#b29a83;font-size:.76rem;margin-top:17px}
 (() => {
   const $ = id => document.getElementById(id);
   const params = new URLSearchParams(location.search);
-  const isHostDashboard = params.get('dashboard') === '1';
-  // The public root URL is the caller page. The host uses ?dashboard=1.
+  // The public Pages URL is the host dashboard. Caller links carry ?host=<host-id>.
+  const isHostDashboard = !params.has('host');
   const hostIdFromLink = isHostDashboard ? null : (params.get('host') || 'tml-the-movie-list-live');
   const debugMode = params.get('debug') === '1';
   const traceMode = params.get('trace') === '1';
@@ -865,7 +865,7 @@ footer{text-align:center;color:#b29a83;font-size:.76rem;margin-top:17px}
       const thisPeer = peer;
       thisPeer.on('open', id => {
         if (peer !== thisPeer) return;
-        const link = 'https://the-movie-list-live.github.io/calls/';
+        const link = 'https://the-movie-list-live.github.io/calls/?host=tml-the-movie-list-live';
         setText('shareLink',link);
         $('copyBtn').onclick = async () => {
           try { await navigator.clipboard.writeText(link); setText('copyBtn','Copied!'); }
