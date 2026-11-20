@@ -89,7 +89,7 @@ footer{text-align:center;color:#b29a83;font-size:.76rem;margin-top:17px}
   const debugMode = params.get('debug') === '1';
   const traceMode = params.get('trace') === '1';
   // Version the generated caller URL so browsers cannot reuse an older cached page.
-  const buildVersion = '20261121-6';
+  const buildVersion = '20261121-8';
   const diagnosticEntries = [];
   function diag(event, details = {}) {
     if (!debugMode && !traceMode) return;
@@ -865,7 +865,7 @@ footer{text-align:center;color:#b29a83;font-size:.76rem;margin-top:17px}
       const thisPeer = peer;
       thisPeer.on('open', id => {
         if (peer !== thisPeer) return;
-        const link = 'https://the-movie-list-live.github.io/calls/';
+        const link = 'https://the-movie-list-live.github.io/calls/join/';
         setText('shareLink',link);
         $('copyBtn').onclick = async () => {
           try { await navigator.clipboard.writeText(link); setText('copyBtn','Copied!'); }
